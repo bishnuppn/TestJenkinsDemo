@@ -1,0 +1,28 @@
+steps:
+  # 1. Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$COMMIT_SHA', '.']
+
+  # 2. Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$COMMIT_SHA']
+
+  # 3. Deploy the container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME}'
+      - '--image'
+      - '${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$COMMIT_SHA'
+      - '--region'
+      - '${_LOCATION}'
+      - '--allow-unauthenticated' # Allows public access to the service
+
+# Define substitutions (variables) for this pipeline
+substitutions:
+  _SERVICE_NAME: 'test-jenkins-service'
+  _LOCATION: 'us-central1-a' # Change to your preferred region
+  _REPOSITORY: 'my-app-repo'
+  _IMAGE_NAME: 'test-jenkins-service-image'

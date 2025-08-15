@@ -23,6 +23,6 @@ steps:
 # Define substitutions (variables) for this pipeline
 substitutions:
   _SERVICE_NAME: 'test-jenkins-service'
-  _LOCATION: 'us-central1-a' # Change to your preferred region
+  _LOCATION: 'us-central1' # Change to your preferred region
   _REPOSITORY: 'my-app-repo'
   _IMAGE_NAME: 'test-jenkins-service-image'
